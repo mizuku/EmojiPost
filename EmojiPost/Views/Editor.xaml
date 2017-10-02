@@ -1,0 +1,179 @@
+﻿<UserControl x:Class="EmojiPost.Views.Editor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EmojiPost.Views"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:ctrl="clr-namespace:EmojiPost.Views.Controls"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             >
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                <Setter Property="Margin" Value="8 8 8 8" />
+            </Style>
+            <Style TargetType="{x:Type Slider}" BasedOn="{StaticResource MaterialDesignSlider}">
+                <Setter Property="Margin" Value="8 0 8 0" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <DockPanel>
+        <!--
+        <Menu IsMainMenu="True" DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="Save" InputGestureText="Ctrl+S">
+                    <MenuItem.Icon>
+                        <md:PackIcon Kind="ContentSave" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Save As.." />
+                <MenuItem Header="Exit" InputGestureText="Ctrl+E">
+                    <MenuItem.Icon>
+                        <md:PackIcon Kind="ExitToApp" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        -->
+        <Border DockPanel.Dock="Top" BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0 0 0 1" />
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar Style="{StaticResource MaterialDesignToolBar}" ClipToBounds="False">
+                <Button ToolTip="File Open">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <local:OpenFileSelectAction CompleteCommand="{Binding OpenImageFileCommand, Mode=OneWay}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Viewbox Width="24" Height="24">
+                        <Canvas Width="24" Height="24">
+                            <Path Style="{StaticResource FolderOpen}" />
+                        </Canvas>
+                    </Viewbox>
+                </Button>
+                <Button ToolTip="Save" Command="{Binding SaveStampCommand, Mode=OneWay}">
+                    <md:PackIcon Kind="ContentSave" />
+                </Button>
+                <Separator />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <md:PackIcon Kind="MagnifyMinus" />
+                    <Slider x:Name="MagnifySlider" Orientation="Horizontal"
+                            Minimum="75" Maximum="200" SmallChange="25" LargeChange="25" 
+                            Width="200" AutoToolTipPlacement="TopLeft"
+                            Value="{Binding MagnifyPercent, Mode=TwoWay}"/>
+                    <md:PackIcon Kind="MagnifyPlus" />
+                    <TextBlock Text="{Binding ElementName=MagnifySlider, Path=Value, Mode=OneWay}" Width="23" TextAlignment="Right" />
+                    <TextBlock Text="%" />
+                </StackPanel>
+                <Separator />
+            </ToolBar>
+        </ToolBarTray>
+        <Border DockPanel.Dock="Top" BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0 0 0 1" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="280" />
+            </Grid.ColumnDefinitions>
+            <!-- EditScreen -->
+            <Grid Grid.Column="0">
+                <md:Card Margin="8 8 8 8"
+                         Background="{StaticResource {x:Static SystemColors.InactiveCaptionBrushKey}}"
+                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ClipToBounds="false" SnapsToDevicePixels="True">
+                    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" CanContentScroll="True">
+                        <Canvas x:Name="EditCanvas" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White"
+                                Width="{Binding CurrentStamp.Value.CanvasWidth, Mode=OneWay}" Height="{Binding CurrentStamp.Value.CanvasHeight}">
+                            <Canvas.LayoutTransform>
+                                <ScaleTransform ScaleX="{Binding Magnify.Value, Mode=OneWay}" ScaleY="{Binding Magnify.Value, Mode=OneWay}" />
+                            </Canvas.LayoutTransform>
+                            <Canvas Background="Transparent"
+                                    Width="{Binding ElementName=EditCanvas,Path=ActualWidth}"
+                                    Height="{Binding ElementName=EditCanvas,Path=ActualHeight}">
+                                <i:Interaction.Triggers>
+                                    <prism:InteractionRequestTrigger SourceObject="{Binding CropRequest, Mode=OneWay}">
+                                        <local:CropAction />
+                                    </prism:InteractionRequestTrigger>
+                                </i:Interaction.Triggers>
+                                <ctrl:DraggableItemsControl DataContext="{Binding CurrentStamp.Value, Mode=OneWay}"
+                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Canvas},Path=ActualWidth,Mode=OneWay}"
+                                        Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Canvas},Path=ActualHeight,Mode=OneWay}"
+                                        Background="Transparent" Focusable="True" IsHitTestVisible="True">
+                                    <ctrl:DraggableItemsControl.Items>
+                                        <TextBlock x:Name="DebugPrint" />
+                                        <Image Canvas.Left="{Binding SourceRectLeft, Mode=TwoWay}" Canvas.Top="{Binding SourceRectTop, Mode=TwoWay}"
+                                               Source="{Binding ImageSourceBitmap, Mode=OneWay}" Stretch="None" />
+                                        <Border x:Name="Clipper"  Canvas.Left="{Binding ClipRectLeft, Mode=TwoWay}" Canvas.Top="{Binding ClipRectTop, Mode=TwoWay}"
+                                                Width="{Binding ClipRectWidth, Mode=TwoWay}" Height="{Binding ClipRectHeight, Mode=TwoWay}"
+                                                MinWidth="20" MinHeight="20" Background="Transparent" />
+                                    </ctrl:DraggableItemsControl.Items>
+                                    <ctrl:DraggableItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas />
+                                        </ItemsPanelTemplate>
+                                    </ctrl:DraggableItemsControl.ItemsPanel>
+                                </ctrl:DraggableItemsControl>
+                                <Button Canvas.Right="0" Canvas.Top="0" Command="{Binding TestCommand, Mode=OneWay}">くり抜き</Button>
+                                <Image x:Name="ClipImage" Canvas.Right="0" Canvas.Bottom="0" Stretch="None" Source="{Binding ClipImage, Mode=OneWay}" />
+                            </Canvas>
+                        </Canvas>
+                    </ScrollViewer>
+                </md:Card>
+            </Grid>
+            <!-- SideMenu -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <md:Card Grid.Row="0" Margin="8 8 8 8" DataContext="{Binding CurrentStamp.Value, Mode=OneWay}">
+                    <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0 0 0 40">
+                        <!-- キャンバス情報 -->
+                        <TextBlock Text="キャンバスサイズ" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="8 8 0 0" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox x:Name="CanvasWidth"
+                                md:HintAssist.Hint="幅(px)"
+                                md:HintAssist.IsFloating="True"
+                                Text="{Binding CanvasWidth, Mode=TwoWay}" Width="50" />
+                            <TextBox x:Name="CanvasHeight"
+                                md:HintAssist.Hint="高さ(px)"
+                                md:HintAssist.IsFloating="True"
+                                Text="{Binding CanvasHeight, Mode=TwoWay}" Width="50" />
+                        </StackPanel>
+                        <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0 0 0 1" />
+                        <!-- スタンプ情報 -->
+                        <TextBlock Text="スタンプ情報" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="8 8 0 0" />
+                        <TextBox x:Name="StampName"
+                                md:HintAssist.Hint="スタンプの名前"
+                                md:HintAssist.IsFloating="True"
+                                Text="{Binding StampName, Mode=TwoWay}" />
+                        <TextBox x:Name="StampLocalName"
+                                md:HintAssist.Hint="スタンプを認識しやすいようにつける名前"
+                                md:HintAssist.IsFloating="True"
+                                Text="{Binding StampLocalName, Mode=TwoWay}" />
+                        <TextBox x:Name="PixelOfFragments"
+                                md:HintAssist.Hint="分割後のスタンプ画像のピクセルサイズ(px)"
+                                md:HintAssist.IsFloating="True"
+                                Text="{Binding PixelOfFragments, Mode=TwoWay}" />
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right">
+                            <Button Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                                    Margin="8 8 8 8"
+                                    ToolTip="Reset">RESET</Button>
+                            <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                                    Margin="8 8 8 8"
+                                    ToolTip="Preview">PREVIEW</Button>
+                        </StackPanel>
+                    </StackPanel>
+                </md:Card>
+                <Canvas Grid.Row="0">
+                    <Button Canvas.Bottom="-15" Canvas.Right="25" Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <md:PackIcon Kind="Upload" Width="32" Height="32" />
+                    </Button>
+                </Canvas>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</UserControl>
