@@ -45,7 +45,7 @@ namespace EmojiPost.Views
 
             // 結果
             notification.ClipImage = bmp;
-#if DEBUG
+#if false
             using (var stream = new FileStream(@"C:\work\aya.png", FileMode.Create))
             {
                 var encoder = new PngBitmapEncoder();
