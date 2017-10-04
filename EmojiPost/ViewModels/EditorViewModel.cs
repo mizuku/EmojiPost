@@ -61,19 +61,12 @@ namespace EmojiPost.ViewModels
         /// <summary>
         /// スタンプを保存するコマンド を取得します。
         /// </summary>
-        public ReactiveCommand SaveStampCommand { get; }
+        public ReactiveCommand SaveStampCommand { get; private set; }
 
         /// <summary>
-        /// 画像くり抜き通知オブジェクト
+        /// 画像くり抜きコマンド
         /// </summary>
-        private CropNotification CropNotification { get; set; }
-
-        public ReactiveCommand TestCommand { get; private set; }
-
-        public BitmapSource ClipImage
-        {
-            get => this.CropNotification.ClipImage;
-        }
+        public ReactiveCommand CropCommand { get; private set; }
 
         #endregion
 
@@ -92,16 +85,16 @@ namespace EmojiPost.ViewModels
             }
         }
 
-        private EditorModel _editorModel;
+        private EditorModel _editor;
         /// <summary>
         /// スタンプ編集モデル を取得または設定します。
         /// </summary>
-        public EditorModel EditorModel
+        public EditorModel Editor
         {
-            get => this._editorModel;
+            get => this._editor;
             set
             {
-                if (this._editorModel != value) this.SetEditor(value);
+                if (this._editor != value) this.SetEditor(value);
             }
         }
 
@@ -131,11 +124,29 @@ namespace EmojiPost.ViewModels
         /// <param name="model">スタンプ編集モデル</param>
         private void SetEditor(EditorModel model)
         {
-            this._editorModel = model;
+            this._editor = model;
             if (null != model)
             {
                 #region Setup ReactiveProperty
                 this.CurrentStamp = model.ToReactivePropertyAsSynchronized(m => m.CurrentStamp);
+
+                this.SaveStampCommand = model.ObserveProperty(m => m.ImageSourceBitmap)
+                    .Select(p => null != p)
+                    .ToReactiveCommand();
+                this.SaveStampCommand.Subscribe(() => this.SaveStamp());
+
+                var p0 = model.ObserveProperty(m => m.ImageSourceBitmap);
+                var p1 = model.ObserveProperty(m => m.StampName);
+                var p2 = model.ObserveProperty(m => m.PixelOfFragments);
+                this.CropCommand = p0.CombineLatest(p1, p2,
+                    (pp0, pp1, pp2) => null != pp0 && !string.IsNullOrWhiteSpace(pp1) && 0 < pp2)
+                    .ToReactiveCommand();
+                this.CropCommand.Subscribe(() =>
+                {
+                    this.CropRequest.Raise(
+                        new CropNotification(this.CurrentStamp.Value.ClipRect),
+                        n => this.Editor.DevideImage(n.ClipImage));
+                });
                 #endregion
             }
         }
@@ -147,7 +158,7 @@ namespace EmojiPost.ViewModels
         private void OpenImageFile(string filePath)
         {
             // 新しいスタンプとして開く
-            this.EditorModel.CreateStamp(filePath);
+            this.Editor.CreateStamp(filePath);
         }
 
         /// <summary>
@@ -155,7 +166,7 @@ namespace EmojiPost.ViewModels
         /// </summary>
         private void SaveStamp()
         {
-            this.EditorModel.SaveStamp();
+            this.Editor.SaveStamp();
         }
         
         #endregion
@@ -171,24 +182,10 @@ namespace EmojiPost.ViewModels
             this.MagnifyPercent = 100;
 
             this.CropRequest = new InteractionRequest<CropNotification>();
-            this.CropNotification = new CropNotification();
 
-            this.OpenImageFileCommand = Observable.Return<bool>(true).ToReactiveCommand<string>();
+            this.OpenImageFileCommand = Observable.Return<bool>(true)
+                .ToReactiveCommand<string>();
             this.OpenImageFileCommand.Subscribe((s) => this.OpenImageFile(s));
-
-            this.SaveStampCommand = Observable.Return<bool>(true).ToReactiveCommand();
-            this.SaveStampCommand.Subscribe(() => this.SaveStamp());
-
-            this.TestCommand = Observable.Return<bool>(true).ToReactiveCommand();
-            this.TestCommand.Subscribe(() =>
-            {
-                this.CropNotification.ClipRect = new Rect(
-                    this.CurrentStamp.Value.ClipRectLeft,
-                    this.CurrentStamp.Value.ClipRectTop,
-                    this.CurrentStamp.Value.ClipRectWidth,
-                    this.CurrentStamp.Value.ClipRectHeight);
-                this.CropRequest.Raise(this.CropNotification, n => RaisePropertyChanged(nameof(this.ClipImage)));
-            });
         }
 
         #endregion

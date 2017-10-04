@@ -16,7 +16,7 @@ namespace EmojiPost.ViewModels.Notifications
         /// <summary>
         /// くり抜き領域を表す<see cref="Rect"/>を取得または設定します。
         /// </summary>
-        public Rect ClipRect { get; set; }
+        public Rect ClipRect { get; }
 
         /// <summary>
         /// くり抜き結果の画像を取得または設定します。
@@ -37,8 +37,10 @@ namespace EmojiPost.ViewModels.Notifications
         /// <summary>
         /// このクラスのインスタンスを生成する、既定のコンストラクタです。
         /// </summary>
-        public CropNotification()
+        public CropNotification(Rect clipRect)
+            : base()
         {
+            this.ClipRect = clipRect;
         }
 
         #endregion

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using Prism.Mvvm;
-using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using EmojiPost.DataServices.Clients;
+using System.Linq;
 using System.IO;
-using System.Windows;
+using System.Windows.Media.Imaging;
+using Prism.Mvvm;
 using EmojiPost.Enums;
+using EmojiPost.DataServices.Clients;
 
 namespace EmojiPost.Models
 {
@@ -45,10 +41,7 @@ namespace EmojiPost.Models
         /// </summary>
         public int CanvasWidth
         {
-            get
-            {
-                return this.CurrentStamp?.CanvasWidth ?? this._canvasWidth;
-            }
+            get => this.CurrentStamp?.CanvasWidth ?? this._canvasWidth;
         }
 
         private int _canvasHeight = default(int);
@@ -57,11 +50,45 @@ namespace EmojiPost.Models
         /// </summary>
         public int CanvasHeight
         {
-            get
-            {
-                return this.CurrentStamp?.CanvasHeight ?? this._canvasHeight;
-            }
+            get => this.CurrentStamp?.CanvasHeight ?? this._canvasHeight;
         }
+
+        private string _stampName;
+        /// <summary>
+        /// 編集中のスタンプの名前 を取得します。このプロパティは読み取り専用です。
+        /// </summary>
+        public string StampName
+        {
+            get => this.CurrentStamp?.StampName ?? this._stampName;
+        }
+
+        private string _stampLocalName;
+        /// <summary>
+        /// 編集中のスタンプ表示名 を取得します。このプロパティは読み取り専用です。
+        /// </summary>
+        public string StampLocalName
+        {
+            get => this.CurrentStamp?.StampLocalName ?? this._stampLocalName;
+        }
+
+        private int _pixelOfFragments;
+        /// <summary>
+        /// 編集中の１コマのピクセル数 を取得します。このプロパティは読み取り専用です。
+        /// </summary>
+        public int PixelOfFragments
+        {
+            get => this.CurrentStamp?.PixelOfFragments ?? this._pixelOfFragments;
+        }
+
+        private BitmapSource _imageSourceBitmap;
+        /// <summary>
+        /// 編集中の元画像のビットマップオブジェクト を取得します。このプロパティは読み取り専用です。
+        /// </summary>
+        public BitmapSource ImageSourceBitmap
+        {
+            get => this.CurrentStamp?.ImageSourceBitmap ?? this._imageSourceBitmap;
+        }
+        
 
         #endregion
 
@@ -139,6 +166,15 @@ namespace EmojiPost.Models
         }
 
         /// <summary>
+        /// スタンプ情報に従って画像の分割を行います。
+        /// </summary>
+        /// <param name="clipImage">分割する画像</param>
+        public void DevideImage(BitmapSource clipImage)
+        {
+            this.CurrentStamp.DivideToFragments(clipImage);
+        }
+
+        /// <summary>
         /// 編集中のスタンプ の設定と初期化を行います。
         /// </summary>
         /// <param name="model">編集中のスタンプモデル</param>
@@ -153,6 +189,10 @@ namespace EmojiPost.Models
             RaisePropertyChanged(nameof(this.CurrentStamp));
             RaisePropertyChanged(nameof(this.CanvasWidth));
             RaisePropertyChanged(nameof(this.CanvasHeight));
+            RaisePropertyChanged(nameof(this.StampName));
+            RaisePropertyChanged(nameof(this.StampLocalName));
+            RaisePropertyChanged(nameof(this.PixelOfFragments));
+            RaisePropertyChanged(nameof(this.ImageSourceBitmap));
         }
 
         #endregion
@@ -179,6 +219,18 @@ namespace EmojiPost.Models
                     break;
                 case nameof(stamp.CanvasHeight):
                     RaisePropertyChanged(nameof(this.CanvasHeight));
+                    break;
+                case nameof(stamp.StampName):
+                    RaisePropertyChanged(nameof(this.StampName));
+                    break;
+                case nameof(stamp.StampLocalName):
+                    RaisePropertyChanged(nameof(this.StampLocalName));
+                    break;
+                case nameof(stamp.PixelOfFragments):
+                    RaisePropertyChanged(nameof(this.PixelOfFragments));
+                    break;
+                case nameof(stamp.ImageSourceBitmap):
+                    RaisePropertyChanged(nameof(this.ImageSourceBitmap));
                     break;
                 default:
                     break;

@@ -286,6 +286,39 @@ namespace EmojiPost.Models
         /// </summary>
         public void Reload()
         {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 画像を分割し、スタンプ断片情報を作成します。
+        /// </summary>
+        /// <param name="clipImage">分割する画像</param>
+        public void DivideToFragments(BitmapSource clipImage)
+        {
+            if (null == clipImage || string.IsNullOrWhiteSpace(this.StampName) || this.PixelOfFragments <= 0)
+                throw new ArgumentException("必要なスタンプ情報が未設定です。");
+
+            var px = this.PixelOfFragments;
+            var cx = (int)Math.Floor(this.ClipRectWidth / px);
+            var cy = (int)Math.Floor(this.ClipRectHeight / px);
+
+            var fragments = new List<FragmentModel>();
+            int order = 0;
+            for (int y = 0; y < cy; y++)
+            {
+                for (int x = 0; x < cx; x++)
+                {
+                    var fragmentImage = new CroppedBitmap(clipImage, new Int32Rect(x * px, y * px, px, px));
+                    var fragment = new FragmentModel()
+                    {
+                        EmojiName = $"{this.StampName}{y}{x}",
+                        ImageBitmap = fragmentImage,
+                        OrderOfFragments = order++,
+                    };
+                    fragments.Add(fragment);
+                }
+            }
+            this.Fragments = new ObservableCollection<FragmentModel>(fragments);
         }
 
         /// <summary>
@@ -334,9 +367,9 @@ namespace EmojiPost.Models
         /// スタンプモデルからスタンプエンティティを取得します。
         /// </summary>
         /// <returns>このスタンプモデルの情報を反映したスタンプエンティティ</returns>
-        private StampEntity ToEntities()
+        public StampEntity ToEntities()
         {
-            var e = this.entity;
+            var e = this.entity ?? new StampEntity();
             e.StampName = this.StampName;
             e.StampLocalName = this.StampLocalName;
             e.CanvasWidth = this.CanvasWidth;

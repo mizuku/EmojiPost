@@ -157,6 +157,7 @@
     <Compile Include="DataServices\Clients\ResultValue.cs" />
     <Compile Include="DataServices\Entities\SettingEntity.cs" />
     <Compile Include="DataServices\Entities\WorkspaceEntity.cs" />
+    <Compile Include="DataServices\Services\IFragmentService.cs" />
     <Compile Include="DataServices\Services\Implementations\StampService.cs" />
     <Compile Include="DataServices\Services\IStampService.cs" />
     <Compile Include="DataServices\Services\IWorkspaceService.cs" />

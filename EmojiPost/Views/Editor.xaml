@@ -80,7 +80,7 @@
             </Grid.ColumnDefinitions>
             <!-- EditScreen -->
             <Grid Grid.Column="0">
-                <md:Card Margin="8 8 8 8"
+                <md:Card Margin="8 8 8 8" x:Name="CanvasPlace"
                          Background="{StaticResource {x:Static SystemColors.InactiveCaptionBrushKey}}"
                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ClipToBounds="false" SnapsToDevicePixels="True">
                     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" CanContentScroll="True">
@@ -114,12 +114,43 @@
                                         </ItemsPanelTemplate>
                                     </ctrl:DraggableItemsControl.ItemsPanel>
                                 </ctrl:DraggableItemsControl>
-                                <Button Canvas.Right="0" Canvas.Top="0" Command="{Binding TestCommand, Mode=OneWay}">くり抜き</Button>
-                                <Image x:Name="ClipImage" Canvas.Right="0" Canvas.Bottom="0" Stretch="None" Source="{Binding ClipImage, Mode=OneWay}" />
                             </Canvas>
+                            
                         </Canvas>
                     </ScrollViewer>
                 </md:Card>
+                <Canvas
+                    Width="{Binding ElementName=CanvasPlace, Path=ActualWidth}" 
+                    Height="{Binding ElementName=CanvasPlace, Path=ActualHeight}">
+                    <!-- DEBUG -->
+                    <ListBox Canvas.Bottom="0" Canvas.Right="0"
+                             ItemsSource="{Binding CurrentStamp.Value.Fragments, Mode=OneWay}">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                            <Border BorderBrush="Red" BorderThickness="0.5">
+                                                <ContentPresenter />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Image Stretch="None" Source="{Binding ImageBitmap, Mode=OneWay}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Canvas>
             </Grid>
             <!-- SideMenu -->
             <Grid Grid.Column="1">
@@ -171,7 +202,8 @@
                                     IsEnabled="False">RESET</Button>
                             <Button Style="{StaticResource MaterialDesignRaisedButton}"
                                     Margin="8 8 8 8"
-                                    ToolTip="Preview">PREVIEW</Button>
+                                    ToolTip="Preview"
+                                    Command="{Binding CropCommand, Mode=OneWay}">PREVIEW</Button>
                         </StackPanel>
                     </Grid>
                 </md:Card>
