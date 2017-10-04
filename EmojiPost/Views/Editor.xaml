@@ -206,7 +206,9 @@
                         </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Image Stretch="None" Source="{Binding ImageBitmap, Mode=OneWay}" />
+                                <Viewbox Width="20" Height="20">
+                                    <Image Stretch="None" Source="{Binding ImageBitmap, Mode=OneWay}" />
+                                </Viewbox>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

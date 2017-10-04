@@ -114,7 +114,7 @@ namespace EmojiPost.Models
         /// </summary>
         public int PositionX
         {
-            get => this.FragmentAddressX * this.PixelOfFragments;
+            get => this.FragmentAddressX * 20;
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace EmojiPost.Models
         /// </summary>
         public int PositionY
         {
-            get => this.FragmentAddressY * this.PixelOfFragments;
+            get => this.FragmentAddressY * 20;
         }
 
         #endregion
