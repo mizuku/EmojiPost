@@ -1,14 +1,11 @@
-﻿using EmojiPost.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+
+using EmojiPost.Models;
 
 namespace EmojiPost.Views.Adorners
 {
@@ -182,38 +179,47 @@ namespace EmojiPost.Views.Adorners
                             {
                                 var w = Math.Max(dragStartWidth - moveX, el.MinWidth);
                                 var h = Math.Max(dragStartHeight - moveY, el.MinHeight);
-                                el.Width = w;
-                                el.Height = h;
+                                var size = new Size(w, h);
+                                var s = (el.DataContext as IDraggableItem)?.Coerce(size) ?? size;
+                                el.Width = s.Width;
+                                el.Height = s.Height;
                                 // 最小サイズを下回るときに場所だけ変わらないように差分で移動
-                                Canvas.SetLeft(el, dragStartWidth + (this.dragStart.X / this.magnify) - w);
-                                Canvas.SetTop(el, dragStartHeight + (this.dragStart.Y / this.magnify) - h);
+                                Canvas.SetLeft(el, dragStartWidth + (this.dragStart.X / this.magnify) - s.Width);
+                                Canvas.SetTop(el, dragStartHeight + (this.dragStart.Y / this.magnify) - s.Height);
                             }
                             break;
                         case Corners.TopRight:
                             {
                                 var w = Math.Max(dragStartWidth + moveX, el.MinWidth);
                                 var h = Math.Max(dragStartHeight - moveY, el.MinHeight);
-                                el.Width = w;
-                                el.Height = h;
+                                var size = new Size(w, h);
+                                var s = (el.DataContext as IDraggableItem)?.Coerce(size) ?? size;
+                                el.Width = s.Width;
+                                el.Height = s.Height;
                                 // 最小サイズを下回るときに場所だけ変わらないように差分で移動
-                                Canvas.SetTop(el, dragStartHeight + (this.dragStart.Y / this.magnify) - h);
+                                Canvas.SetTop(el, dragStartHeight + (this.dragStart.Y / this.magnify) - s.Height);
                             }
                             break;
                         case Corners.BottomLeft:
                             {
                                 var w = Math.Max(dragStartWidth - moveX, el.MinWidth);
                                 var h = Math.Max(dragStartHeight + moveY, el.MinHeight);
-                                el.Width = w;
-                                el.Height = h;
+                                var size = new Size(w, h);
+                                var s = (el.DataContext as IDraggableItem)?.Coerce(size) ?? size;
+                                el.Width = s.Width;
+                                el.Height = s.Height;
                                 // 最小サイズを下回るときに場所だけ変わらないように差分で移動
-                                Canvas.SetLeft(el, dragStartWidth + (this.dragStart.X / this.magnify) - w);
+                                Canvas.SetLeft(el, dragStartWidth + (this.dragStart.X / this.magnify) - s.Width);
                             }
                             break;
                         case Corners.BottomRight:
                             {
-                                // 大きさだけなので単純
-                                el.Width = Math.Max(dragStartWidth + moveX, el.MinWidth);
-                                el.Height = Math.Max(dragStartHeight + moveY, el.MinHeight);
+                                var w = Math.Max(dragStartWidth + moveX, el.MinWidth);
+                                var h = Math.Max(dragStartHeight + moveY, el.MinHeight);
+                                var size = new Size(w, h);
+                                var s = (el.DataContext as IDraggableItem)?.Coerce(size) ?? size;
+                                el.Width = s.Width;
+                                el.Height = s.Height;
                             }
                             break;
                         default:

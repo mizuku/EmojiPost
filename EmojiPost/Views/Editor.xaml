@@ -8,7 +8,7 @@
              xmlns:ctrl="clr-namespace:EmojiPost.Views.Controls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="450" d:DesignWidth="500"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              >
@@ -102,12 +102,11 @@
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Canvas},Path=ActualHeight,Mode=OneWay}"
                                         Background="Transparent" Focusable="True" IsHitTestVisible="True">
                                     <ctrl:DraggableItemsControl.Items>
-                                        <TextBlock x:Name="DebugPrint" />
                                         <Image Canvas.Left="{Binding SourceRectLeft, Mode=TwoWay}" Canvas.Top="{Binding SourceRectTop, Mode=TwoWay}"
                                                Source="{Binding ImageSourceBitmap, Mode=OneWay}" Stretch="None" />
                                         <Border x:Name="Clipper"  Canvas.Left="{Binding ClipRectLeft, Mode=TwoWay}" Canvas.Top="{Binding ClipRectTop, Mode=TwoWay}"
                                                 Width="{Binding ClipRectWidth, Mode=TwoWay}" Height="{Binding ClipRectHeight, Mode=TwoWay}"
-                                                MinWidth="20" MinHeight="20" Background="Transparent" />
+                                                MinWidth="{Binding PixelOfFragments, Mode=OneWay}" MinHeight="{Binding PixelOfFragments, Mode=OneWay}" Background="Transparent" />
                                     </ctrl:DraggableItemsControl.Items>
                                     <ctrl:DraggableItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -128,45 +127,53 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <md:Card Grid.Row="0" Margin="8 8 8 8" DataContext="{Binding CurrentStamp.Value, Mode=OneWay}">
-                    <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0 0 0 40">
-                        <!-- キャンバス情報 -->
-                        <TextBlock Text="キャンバスサイズ" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="8 8 0 0" />
-                        <StackPanel Orientation="Horizontal">
-                            <TextBox x:Name="CanvasWidth"
+                <md:Card Grid.Row="0" Margin="8 8 8 8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Vertical"
+                                    DataContext="{Binding CurrentStamp.Value, Mode=OneWay}">
+                            <!-- キャンバス情報 -->
+                            <TextBlock Text="キャンバスサイズ" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="8 8 0 0" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="CanvasWidth"
                                 md:HintAssist.Hint="幅(px)"
                                 md:HintAssist.IsFloating="True"
                                 Text="{Binding CanvasWidth, Mode=TwoWay}" Width="50" />
-                            <TextBox x:Name="CanvasHeight"
+                                <TextBox x:Name="CanvasHeight"
                                 md:HintAssist.Hint="高さ(px)"
                                 md:HintAssist.IsFloating="True"
                                 Text="{Binding CanvasHeight, Mode=TwoWay}" Width="50" />
-                        </StackPanel>
-                        <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0 0 0 1" />
-                        <!-- スタンプ情報 -->
-                        <TextBlock Text="スタンプ情報" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="8 8 0 0" />
-                        <TextBox x:Name="StampName"
+                            </StackPanel>
+                            <Border BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="0 0 0 1" />
+                            <!-- スタンプ情報 -->
+                            <TextBlock Text="スタンプ情報" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="8 8 0 0" />
+                            <TextBox x:Name="StampName"
                                 md:HintAssist.Hint="スタンプの名前"
                                 md:HintAssist.IsFloating="True"
                                 Text="{Binding StampName, Mode=TwoWay}" />
-                        <TextBox x:Name="StampLocalName"
+                            <TextBox x:Name="StampLocalName"
                                 md:HintAssist.Hint="スタンプを認識しやすいようにつける名前"
                                 md:HintAssist.IsFloating="True"
                                 Text="{Binding StampLocalName, Mode=TwoWay}" />
-                        <TextBox x:Name="PixelOfFragments"
+                            <TextBox x:Name="PixelOfFragments"
                                 md:HintAssist.Hint="分割後のスタンプ画像のピクセルサイズ(px)"
                                 md:HintAssist.IsFloating="True"
                                 Text="{Binding PixelOfFragments, Mode=TwoWay}" />
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right">
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal"
+                                    HorizontalAlignment="Right" Margin="0 0 0 40">
                             <Button Style="{StaticResource MaterialDesignRaisedAccentButton}"
                                     Margin="8 8 8 8"
-                                    ToolTip="Reset">RESET</Button>
+                                    ToolTip="Reset"
+                                    IsEnabled="False">RESET</Button>
                             <Button Style="{StaticResource MaterialDesignRaisedButton}"
                                     Margin="8 8 8 8"
                                     ToolTip="Preview">PREVIEW</Button>
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
                 </md:Card>
                 <Canvas Grid.Row="0">
                     <Button Canvas.Bottom="-15" Canvas.Right="25" Style="{StaticResource MaterialDesignFloatingActionButton}">

@@ -166,10 +166,11 @@
     <Compile Include="DataServices\Services\IStorageService.cs" />
     <Compile Include="Models\ApplicationModel.cs" />
     <Compile Include="Models\EditorSettingReferenceModel.cs" />
+    <Compile Include="Models\Interfaces\IDraggableItem.cs" />
     <Compile Include="Models\SettingModel.cs" />
     <Compile Include="Models\EditorModel.cs" />
     <Compile Include="Models\FragmentModel.cs" />
-    <Compile Include="Models\ISingletonModel.cs" />
+    <Compile Include="Models\Interfaces\ISingletonModel.cs" />
     <Compile Include="Models\ReferenceStampsModel.cs" />
     <Compile Include="Models\ShellModel.cs" />
     <Compile Include="Models\StampModel.cs" />

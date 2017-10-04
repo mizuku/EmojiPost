@@ -18,7 +18,7 @@ namespace EmojiPost.Models
     /// <summary>
     /// スタンプモデル
     /// </summary>
-    public class StampModel : BindableBase
+    public class StampModel : BindableBase, IDraggableItem
     {
         #region Fields
         /// <summary>
@@ -433,6 +433,16 @@ namespace EmojiPost.Models
 
         #endregion
 
+        #region Implements IDraggableItem
+
+        public Size Coerce(Size size)
+        {
+            return new Size(Math.Floor(size.Width / this.PixelOfFragments) * this.PixelOfFragments,
+                Math.Floor(size.Height / this.PixelOfFragments) * this.PixelOfFragments);
+        }
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -446,8 +456,8 @@ namespace EmojiPost.Models
 
             this._stampName = null;
             this._stampLocalName = null;
-            this._canvasWidth = 600;
-            this._canvasHeight = 400;
+            this._canvasWidth = 200;
+            this._canvasHeight = 200;
             this._imageSourceBitmap = null;
             this._pixelOfFragments = 20;
             this._thumbnailBitmap = null;
