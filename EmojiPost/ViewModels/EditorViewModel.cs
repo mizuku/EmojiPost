@@ -146,8 +146,6 @@ namespace EmojiPost.ViewModels
         /// <param name="filePath">画像ファイルのパス</param>
         private void OpenImageFile(string filePath)
         {
-            // TODO 編集中のファイルを捨てて開いてもよいか ... 仮保存するなら不要か？
-
             // 新しいスタンプとして開く
             this.EditorModel.CreateStamp(filePath);
         }

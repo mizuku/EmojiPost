@@ -205,28 +205,30 @@ namespace EmojiPost.DataServices.Clients
         }
 
         /// <summary>
-        /// 現在のトランザクションを終了します。
+        /// 現在のトランザクションをコミットします。
         /// </summary>
-        public void EndTransaction()
+        public void Commit()
         {
             if (null != this.Transaction)
             {
-                // 保険としてロールバックしておく
-                this.Rollback();
+                this.Transaction.Commit();
                 this.Transaction.Dispose();
-                this.Transaction = null;
+                this.Transaction= null;
             }
         }
 
         /// <summary>
-        /// 現在のトランザクションをコミットします。
-        /// </summary>
-        public void Commit() => this.Transaction?.Commit();
-
-        /// <summary>
         /// 現在のトランザクションをロールバックします。
         /// </summary>
-        public void Rollback() => this.Transaction?.Rollback();
+        public void Rollback()
+        {
+            if (null != this.Transaction)
+            {
+                this.Transaction.Rollback();
+                this.Transaction.Dispose();
+                this.Transaction = null;
+            }
+        }
 
         #endregion
 
@@ -272,9 +274,13 @@ namespace EmojiPost.DataServices.Clients
 
                 // アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
                 // 大きなフィールドを null に設定します。
+                if (null != this.Transaction)
+                {
+                    this.Transaction.Dispose();
+                    this.Transaction = null;
+                }
                 if (null != this.SQLite)
                 {
-                    this.EndTransaction();
                     this.SQLite.Close();
                     this.SQLite.Dispose();
                     this.SQLite = null;

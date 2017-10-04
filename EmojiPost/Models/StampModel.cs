@@ -75,16 +75,6 @@ namespace EmojiPost.Models
             set => SetProperty(ref this._canvasHeight, value);
         }
 
-        //private byte[] _imageSource;
-        ///// <summary>
-        ///// 元画像 を取得または設定します。
-        ///// </summary>
-        //public byte[] ImageSource
-        //{
-        //    get => this._imageSource;
-        //    set => SetProperty(ref this._imageSource, value);
-        //}
-
         private BitmapSource _imageSourceBitmap;
         /// <summary>
         /// 元画像のビットマップオブジェクト を取得または設定します。
@@ -186,16 +176,6 @@ namespace EmojiPost.Models
             set => SetProperty(ref this._pixelOfFragments, value);
         }
 
-        //private byte[] _thumbnail;
-        ///// <summary>
-        ///// 結果のサムネイル画像 を取得または設定します。
-        ///// </summary>
-        //private byte[] Thumbnail
-        //{
-        //    get => this._thumbnail;
-        //    set => SetProperty(ref this._thumbnail, value);
-        //}
-
         private BitmapSource _thumbnailBitmap;
         /// <summary>
         /// 結果のサムネイル画像のビットマップオブジェクト を取得または設定します。
@@ -292,46 +272,13 @@ namespace EmojiPost.Models
         /// <param name="db">データベースプロバイダー</param>
         public void SaveStamp(DbProvider db)
         {
-            // TODO CreateStampするときに払い出して仮登録したほうが良さそう
-            bool isInsert = false;
-            if (null == this.entity)
-            {
-                isInsert = true;
-                this.entity = new StampEntity();
-                this.entity.StampId = this.StampService.NextStampId(db);
-                // TODO
-                this.entity.WorkspaceId = 1;
-                this.entity.DateOfCreate = DateTime.Now.ToString();
-            }
-            var e = this.entity;
-            e.StampName = this.StampName;
-            e.StampLocalName = this.StampLocalName;
-            e.CanvasWidth = this.CanvasWidth;
-            e.CanvasHeight = this.CanvasHeight;
-            e.PixelOfFragments = this.PixelOfFragments;
-            e.SourceRect = this.SourceRect.ToString();
-            e.ClipRect = this.ClipRect.ToString();
-            e.EditState = (int)(this.EditState | EditState.Saved);
-            e.DateOfUpdate = DateTime.Now.ToString();
+            // TODO Fragments
 
-            using (var stream = new MemoryStream())
-            {
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(this.ImageSourceBitmap));
-                encoder.Save(stream);
-                e.ImageSource = stream.ToArray();
-            }
-
-            // TODO e.Thumbnail
-
-            if (isInsert)
-            {
-                this.StampService.Insert(db, e);
-            }
-            else
-            {
-                this.StampService.Update(db, e);
-            }
+            // 更新
+            this.EditState = this.EditState | EditState.Saved;
+            this.entity = this.ToEntities();
+            this.entity.DateOfUpdate = DateTime.Now.ToString();
+            this.StampService.Update(db, this.entity);
         }
 
         /// <summary>
@@ -383,6 +330,70 @@ namespace EmojiPost.Models
             this.ClipRectHeight = rect.Height;
         }
 
+        /// <summary>
+        /// スタンプモデルからスタンプエンティティを取得します。
+        /// </summary>
+        /// <returns>このスタンプモデルの情報を反映したスタンプエンティティ</returns>
+        private StampEntity ToEntities()
+        {
+            var e = this.entity;
+            e.StampName = this.StampName;
+            e.StampLocalName = this.StampLocalName;
+            e.CanvasWidth = this.CanvasWidth;
+            e.CanvasHeight = this.CanvasHeight;
+            e.PixelOfFragments = this.PixelOfFragments;
+            e.SourceRect = this.SourceRect.ToString();
+            e.ClipRect = this.ClipRect.ToString();
+            e.EditState = (int)this.EditState;
+
+            if (null != this.ImageSourceBitmap)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    var encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(this.ImageSourceBitmap));
+                    encoder.Save(stream);
+                    e.ImageSource = stream.ToArray();
+                }
+            }
+
+            // TODO e.Thumbnail
+
+            return e;
+        }
+
+        /// <summary>
+        /// ストレージへこのスタンプの情報を追加します。
+        /// </summary>
+        /// <param name="db">データベースプロバイダー</param>
+        private void AddStorage(DbProvider db)
+        {
+            this.StampService.Insert(db, this.entity);
+        }
+
+        /// <summary>
+        /// エンティティの初期化を行います。
+        /// </summary>
+        /// <param name="db">データベースプロバイダー</param>
+        private void InitializeEntities(DbProvider db)
+        {
+            var e = new StampEntity();
+            e.StampId = this.StampService.NextStampId(db);
+            // TODO
+            e.WorkspaceId = 1;
+            e.StampName = this.StampName;
+            e.StampLocalName = this.StampLocalName;
+            e.CanvasWidth = this.CanvasWidth;
+            e.CanvasHeight = this.CanvasHeight;
+            e.PixelOfFragments = this.PixelOfFragments;
+            e.SourceRect = this.SourceRect.ToString();
+            e.ClipRect = this.ClipRect.ToString();
+            e.DateOfCreate = DateTime.Now.ToString();
+            e.DateOfUpdate = DateTime.Now.ToString();
+
+            this.entity = e;
+        }
+
         #endregion
 
         #region Static Methods
@@ -400,6 +411,26 @@ namespace EmojiPost.Models
             return model;
         }
 
+        /// <summary>
+        /// 新しいスタンプモデルのインスタンスを作成します。スタンプの情報は作成時に仮保存されます。
+        /// </summary>
+        /// <param name="db">データベースプロバイダー</param>
+        /// <param name="sourceStream">元画像の入力ストリーム</param>
+        /// <returns>新しいスタンプモデル</returns>
+        public static StampModel CreateStamp(DbProvider db, Stream sourceStream = null)
+        {
+            var stamp = ContainerProvider.Resolve<StampModel>();
+            stamp.InitializeEntities(db);
+            if (null != sourceStream)
+            {
+                stamp.SetImageSource(sourceStream);
+            }
+            // 初期化時点で仮保存
+            stamp.AddStorage(db);
+
+            return stamp;
+        }
+
         #endregion
 
         #region Constructor
@@ -409,6 +440,7 @@ namespace EmojiPost.Models
         /// </summary>
         /// <param name="stampService">スタンプサービス</param>
         public StampModel(IStampService stampService)
+            : base()
         {
             this.StampService = stampService;
 
@@ -421,8 +453,14 @@ namespace EmojiPost.Models
             this._thumbnailBitmap = null;
             this._editState = EditState.Nothing;
             this._fragments = null;
-            this.SetSourceRect(new Rect(0, 0, 0, 0));
-            this.SetClipRect(new Rect(10, 10, 80, 60));
+            this._sourceRectLeft = 0d;
+            this._sourceRectTop = 0d;
+            this._sourceRectWidth = 0d;
+            this._sourceRectHeight = 0d;
+            this._clipRectLeft = 10d;
+            this._clipRectTop = 10d;
+            this._clipRectWidth = 80d;
+            this._clipRectHeight = 60d;
         }
 
         #endregion

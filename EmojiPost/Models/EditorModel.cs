@@ -9,6 +9,7 @@ using System.ComponentModel;
 using EmojiPost.DataServices.Clients;
 using System.IO;
 using System.Windows;
+using EmojiPost.Enums;
 
 namespace EmojiPost.Models
 {
@@ -79,7 +80,7 @@ namespace EmojiPost.Models
 #if false
             using (var db = new DbProvider(setting.StoragePath))
             {
-                this.CurrentStamp = StampModel.LoadById(db, 1);
+                this.CurrentStamp = StampModel.LoadById(db, 999999);
             }
 #endif
         }
@@ -90,12 +91,25 @@ namespace EmojiPost.Models
         /// <param name="inputStream">画像の入力ストリーム</param>
         public void CreateStamp(Stream sourceStream)
         {
-            // TODO 今の編集中スタンプを仮保存
+            StampModel stamp;
+            using (var db = new DbProvider(this.Setting.StoragePath))
+            {
+                db.BeginTransaction();
 
-            
-            // 新しいスタンプを作成する
-            var stamp = ContainerProvider.Resolve<StampModel>();
-            stamp.SetImageSource(sourceStream);
+                if (this.CurrentStamp.EditState == EditState.Nothing)
+                {
+                    // TODO 今の編集中スタンプがまったく編集されていなければ削除？
+
+                }
+                else
+                {
+                    // TODO 今の編集中スタンプを仮保存
+
+                }
+
+                stamp = StampModel.CreateStamp(db, sourceStream);
+                db.Commit();
+            }
             this.CurrentStamp = stamp;
         }
 

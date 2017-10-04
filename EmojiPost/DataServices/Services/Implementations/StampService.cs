@@ -18,24 +18,27 @@ namespace EmojiPost.DataServices.Services.Implementations
 
         public StampEntity ReadEntities(DbProvider db, int stampId)
         {
-            StampEntity entity;
+            StampEntity entity = new StampEntity();
 #if DEBUG
-            entity = new StampEntity()
+            if (999999 == stampId)
             {
-                StampId = 1,
-                WorkspaceId = 1,
-                StampName = "ayamini",
-                StampLocalName = "SD丸山彩",
-                CanvasWidth = 300,
-                CanvasHeight = 300,
-                DateOfCreate = DateTime.Today.ToString(),
-                DateOfUpdate = DateTime.Today.ToString()
-            };
-
-            using (var stream = new MemoryStream(File.ReadAllBytes(@"C:\Users\morita\Pictures\ayamini_128.png")))
-            {
-                entity.ImageSource = stream.ToArray();
+                entity = new StampEntity()
+                {
+                    StampId = stampId,
+                    WorkspaceId = 1,
+                    StampName = "ayamini",
+                    StampLocalName = "SD丸山彩",
+                    CanvasWidth = 300,
+                    CanvasHeight = 300,
+                    DateOfCreate = DateTime.Today.ToString(),
+                    DateOfUpdate = DateTime.Today.ToString()
+                };
+                using (var stream = new MemoryStream(File.ReadAllBytes(@"C:\Users\morita\Pictures\ayamini_128.png")))
+                {
+                    entity.ImageSource = stream.ToArray();
+                }
             }
+
 #endif
             return entity;
         }
