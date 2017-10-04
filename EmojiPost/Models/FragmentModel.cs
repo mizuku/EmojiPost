@@ -7,6 +7,7 @@ using EmojiPost.DataServices.Entities;
 using EmojiPost.DataServices.Clients;
 using EmojiPost.DataServices.Services;
 using System.IO;
+using System.Windows;
 
 namespace EmojiPost.Models
 {
@@ -67,7 +68,6 @@ namespace EmojiPost.Models
         }
 
         private int? _orderOfFragments;
-
         /// <summary>
         /// 順序 を取得または設定します。
         /// </summary>
@@ -75,6 +75,54 @@ namespace EmojiPost.Models
         {
             get => this._orderOfFragments;
             set => SetProperty(ref this._orderOfFragments, value);
+        }
+
+        /// <summary>
+        /// このスタンプ断片を所有するスタンプの大きさを取得または設定します。
+        /// </summary>
+        public Size StampSize { get; set; }
+
+        /// <summary>
+        /// このスタンプ断片の１辺のピクセル数を取得または設定します。
+        /// </summary>
+        public int PixelOfFragments { get; set; }
+
+        /// <summary>
+        /// このスタンプ断片の水平方向位置を取得します。
+        /// </summary>
+        public int FragmentAddressX
+        {
+            get
+            {
+                return (this.OrderOfFragments ?? 0) % (int)(this.StampSize.Width / this.PixelOfFragments);
+            }
+        }
+
+        /// <summary>
+        /// このスタンプ断片の垂直方向位置を取得します。
+        /// </summary>
+        public int FragmentAddressY
+        {
+            get
+            {
+                return (int)Math.Floor((this.OrderOfFragments ?? 0) / (this.StampSize.Width / this.PixelOfFragments));
+            }
+        }
+
+        /// <summary>
+        /// このスタンプ断片のピクセル上の開始位置Xを取得します。
+        /// </summary>
+        public int PositionX
+        {
+            get => this.FragmentAddressX * this.PixelOfFragments;
+        }
+
+        /// <summary>
+        /// このスタンプ断片のピクセル上の開始位置Yを取得します。
+        /// </summary>
+        public int PositionY
+        {
+            get => this.FragmentAddressY * this.PixelOfFragments;
         }
 
         #endregion
@@ -97,7 +145,7 @@ namespace EmojiPost.Models
         /// <param name="fragmentId">スタンプ断片ID</param>
         public void LoadFromStorageById(DbProvider db, int fragmentId)
         {
-
+            throw new NotImplementedException();
         }
         
         /// <summary>
@@ -124,6 +172,11 @@ namespace EmojiPost.Models
             e.WorkspaceId = 1;
             e.EmojiName = this.EmojiName;
             e.OrderOfFragments = this.OrderOfFragments;
+
+            if (string.IsNullOrEmpty(e.DateOfCreate))
+            {
+                e.DateOfCreate = DateTime.Now.ToString();
+            }
 
             if (null != this.ImageBitmap)
             {
@@ -163,8 +216,12 @@ namespace EmojiPost.Models
         /// <summary>
         /// このクラスのインスタンスを生成する、既定のコンストラクタです。
         /// </summary>
-        public FragmentModel()
+        /// <param name="fragmentService">スタンプ断片サービス</param>
+        public FragmentModel(IFragmentService fragmentService)
+            : base()
         {
+            this.FragmentService = fragmentService;
+
             this._fragmentId = 0;
             this._stampId = 0;
             this._emojiName = string.Empty;

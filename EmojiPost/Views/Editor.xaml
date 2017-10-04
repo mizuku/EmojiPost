@@ -8,7 +8,7 @@
              xmlns:ctrl="clr-namespace:EmojiPost.Views.Controls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="500"
+             d:DesignHeight="600" d:DesignWidth="640"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              >
@@ -119,38 +119,6 @@
                         </Canvas>
                     </ScrollViewer>
                 </md:Card>
-                <Canvas
-                    Width="{Binding ElementName=CanvasPlace, Path=ActualWidth}" 
-                    Height="{Binding ElementName=CanvasPlace, Path=ActualHeight}">
-                    <!-- DEBUG -->
-                    <ListBox Canvas.Bottom="0" Canvas.Right="0"
-                             ItemsSource="{Binding CurrentStamp.Value.Fragments, Mode=OneWay}">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListBoxItem}">
-                                <Setter Property="OverridesDefaultStyle" Value="True" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                            <Border BorderBrush="Red" BorderThickness="0.5">
-                                                <ContentPresenter />
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Image Stretch="None" Source="{Binding ImageBitmap, Mode=OneWay}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Canvas>
             </Grid>
             <!-- SideMenu -->
             <Grid Grid.Column="1">
@@ -212,6 +180,37 @@
                         <md:PackIcon Kind="Upload" Width="32" Height="32" />
                     </Button>
                 </Canvas>
+                <!-- DEBUG -->
+                <Grid Grid.Row="1" DataContext="{Binding CurrentStamp.Value, Mode=OneWay}">
+                    <ListBox ItemsSource="{Binding Fragments, Mode=OneWay}">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                <Setter Property="Canvas.Left" Value="{Binding PositionX}" />
+                                <Setter Property="Canvas.Top" Value="{Binding PositionY}" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                            <Border BorderBrush="Red" BorderThickness="0.5">
+                                                <ContentPresenter />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Image Stretch="None" Source="{Binding ImageBitmap, Mode=OneWay}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
             </Grid>
         </Grid>
     </DockPanel>

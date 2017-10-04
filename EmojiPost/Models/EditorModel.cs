@@ -155,23 +155,35 @@ namespace EmojiPost.Models
         /// <summary>
         /// 編集中のスタンプを保存します。
         /// </summary>
-        public void SaveStamp()
+        public void SaveStamp(EditState editState = EditState.Saved)
         {
             var stamp = this.CurrentStamp;
 
             using (var db = new DbProvider(this.Setting.StoragePath))
             {
-                stamp.SaveStamp(db);
+                db.BeginTransaction();
+
+                stamp.SaveStamp(db, editState);
+
+                db.Commit();
             }
         }
 
         /// <summary>
         /// スタンプ情報に従って画像の分割を行います。
         /// </summary>
+        /// <param name="db">データベースプロバイダー</param>
         /// <param name="clipImage">分割する画像</param>
         public void DevideImage(BitmapSource clipImage)
         {
-            this.CurrentStamp.DivideToFragments(clipImage);
+            using (var db = new DbProvider(this.Setting.StoragePath))
+            {
+                db.BeginTransaction();
+
+                this.CurrentStamp.DivideToFragments(db, clipImage);
+
+                db.Commit();
+            }
         }
 
         /// <summary>
@@ -246,6 +258,10 @@ namespace EmojiPost.Models
         /// </summary>
         public EditorModel()
         {
+            this._stampName = string.Empty;
+            this._stampLocalName = string.Empty;
+            this._pixelOfFragments = 20;
+            this._imageSourceBitmap = null;
         }
 
         #endregion
