@@ -169,7 +169,13 @@ namespace AyaStyle.Models
         public int PixelOfFragments
         {
             get => this._pixelOfFragments;
-            set => SetProperty(ref this._pixelOfFragments, value);
+            set
+            {
+                if (SetProperty(ref this._pixelOfFragments, value))
+                {
+                    this.UpdateClipRectByPixelSize();
+                }
+            }
         }
 
         private BitmapSource _thumbnailBitmap;
@@ -515,6 +521,25 @@ namespace AyaStyle.Models
             };
 
             this.entity = e;
+        }
+        
+        /// <summary>
+        /// ピクセルサイズの変更をクリップ領域の矩形に反映する。
+        /// </summary>
+        private void UpdateClipRectByPixelSize()
+        {
+            var ow = this.ClipRectWidth;
+            var oh = this.ClipRectHeight;
+
+            // 端数を切り捨てて新しいピクセルサイズによる断片数を算出
+            int nx = (int)Math.Floor(ow / this.PixelOfFragments);
+            int ny = (int)Math.Floor(oh / this.PixelOfFragments);
+            // 算出した断片数 n と n + 1 のうち、より元の矩形の値に近似するほうを新しい矩形の大きさに適用する
+            int x = Math.Abs(ow - (nx * this.PixelOfFragments)) < Math.Abs(ow - ((nx + 1) * this.PixelOfFragments)) ? nx : nx + 1;
+            int y = Math.Abs(oh - (ny * this.PixelOfFragments)) < Math.Abs(oh - ((ny + 1) * this.PixelOfFragments)) ? ny : ny + 1;
+
+            this.ClipRectWidth = Math.Max(x, 1) * this.PixelOfFragments;
+            this.ClipRectHeight = Math.Max(y, 1) * this.PixelOfFragments;
         }
 
         #endregion
