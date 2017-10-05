@@ -291,6 +291,25 @@ namespace EmojiPost.Models
         }
 
         /// <summary>
+        /// ローカルドライブへこのスタンプの情報を保存します。
+        /// </summary>
+        /// <param name="db">データベースプロバイダー</param>
+        /// <param name="directory">保存先のディレクトリ名</param>
+        public void SaveAsLocal(DbProvider db, string directory)
+        {
+            // 出力前にストレージに保存 TODO アップロード済みのステータスを上書きしてもよいか？考える
+            this.SaveStamp(db, EditState.Saved);
+
+            var stamp = this.ToEntities();
+            var fragments = this.GetFragmentEntities();
+
+            // ファイル出力
+            this.StampService.SaveAsLocal(directory, stamp, fragments);
+
+            // TODO 編集状態をアップデート？ローカル保存のときは不要かも
+        }
+
+        /// <summary>
         /// このスタンプの情報をリロードします。
         /// </summary>
         public void Reload()
@@ -413,6 +432,22 @@ namespace EmojiPost.Models
             // TODO e.Thumbnail
 
             return e;
+        }
+
+        /// <summary>
+        /// このスタンプが所有するスタンプ断片エンティティを取得します。
+        /// </summary>
+        /// <returns>このスタンプが所有するスタンプ断片エンティティ</returns>
+        public IEnumerable<FragmentEntity> GetFragmentEntities()
+        {
+            if (null != this.Fragments && this.Fragments.Any())
+            {
+                return this.Fragments.Select(f => f.ToEntities());
+            }
+            else
+            {
+                return Enumerable.Empty<FragmentEntity>();
+            }
         }
 
         /// <summary>

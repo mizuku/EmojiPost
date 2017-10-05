@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -69,6 +70,46 @@ FROM Stamps
             if (null == result) throw new ApplicationException();
 
             return int.Parse(result.ToString());
+        }
+
+        public void SaveAsLocal(string directory, StampEntity stamp, IEnumerable<FragmentEntity> fragments)
+        {
+            if (string.IsNullOrWhiteSpace(directory) || null == stamp
+                || null == fragments || false == fragments.Any())
+            {
+                throw new ArgumentException();
+            }
+
+            var stampDirectory = $"{directory}{Path.DirectorySeparatorChar}{stamp.StampName}";
+            if (false == Directory.Exists(stampDirectory))
+            {
+                Directory.CreateDirectory(stampDirectory);
+            }
+            var dir = new DirectoryInfo(stampDirectory);
+
+            // 断片画像の書き込み
+            var parent = $"{dir.FullName}{Path.DirectorySeparatorChar}";
+            foreach (var f in fragments)
+            {
+                using (var imageStream = File.Open($"{parent}{f.EmojiName}.png", FileMode.Create, FileAccess.Write))
+                {
+                    imageStream.Write(f.Image, 0, f.Image.Length);
+                    imageStream.Flush();
+                }
+            }
+
+            // スタンプと断片をYAMLにシリアライズする
+            using (var yamlWriter = new StreamWriter($"{parent}definitions.yaml"))
+            {
+                var serializer = new YamlDotNet.Serialization.Serializer();
+                var graph = new
+                {
+                    title = stamp.StampName,
+                    emojis = fragments.Select(f => new { name = f.EmojiName, src = $"{parent}{f.EmojiName}.png" }),
+                };
+                serializer.Serialize(yamlWriter, graph);
+            }
+
         }
 
         #endregion

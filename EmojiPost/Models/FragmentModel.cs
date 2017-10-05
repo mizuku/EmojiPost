@@ -172,11 +172,7 @@ namespace EmojiPost.Models
             e.WorkspaceId = 1;
             e.EmojiName = this.EmojiName;
             e.OrderOfFragments = this.OrderOfFragments;
-
-            if (string.IsNullOrEmpty(e.DateOfCreate))
-            {
-                e.DateOfCreate = DateTime.Now.ToString();
-            }
+            e.DateOfCreate = string.IsNullOrEmpty(e.DateOfCreate) ? DateTime.Now.ToString() : e.DateOfCreate;
 
             if (null != this.ImageBitmap)
             {

@@ -1,4 +1,5 @@
-﻿using EmojiPost.DataServices.Clients;
+﻿using System.Collections.Generic;
+using EmojiPost.DataServices.Clients;
 using EmojiPost.DataServices.Entities;
 
 namespace EmojiPost.DataServices.Services
@@ -42,6 +43,14 @@ namespace EmojiPost.DataServices.Services
         /// <returns>次に割り振るスタンプIDの値</returns>
         /// <remarks>並列実行が行われると採番が重複する可能性があるが、アプリケーションの作り込みでカバーする</remarks>
         int NextStampId(DbProvider db);
+
+        /// <summary>
+        /// スタンプエンティティとスタンプ断片エンティティを元に、ローカルドライブへスタンプを保存します。
+        /// </summary>
+        /// <param name="directory">保存先のディレクトリ名</param>
+        /// <param name="stamp">スタンプエンティティ</param>
+        /// <param name="fragments">スタンプが所有するスタンプ断片エンティティの列挙</param>
+        void SaveAsLocal(string directory, StampEntity stamp, IEnumerable<FragmentEntity> fragments);
 
         #endregion
 

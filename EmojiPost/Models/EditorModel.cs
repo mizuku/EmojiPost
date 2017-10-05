@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Windows.Media.Imaging;
 using Prism.Mvvm;
 using EmojiPost.Enums;
 using EmojiPost.DataServices.Clients;
+using EmojiPost.DataServices.Entities;
 
 namespace EmojiPost.Models
 {
@@ -182,6 +184,23 @@ namespace EmojiPost.Models
 
                 this.CurrentStamp.DivideToFragments(db, clipImage);
 
+                db.Commit();
+            }
+        }
+
+        /// <summary>
+        /// 現在のスタンプ情報をローカルドライブに保存します。
+        /// </summary>
+        /// <param name="directory">保存先のディレクトリ名</param>
+        public void SaveAsLocal(string directory = null)
+        {
+            // TODO アップロード処理で使いまわしたいので null のときは既定の場所に保存するように
+            if (string.IsNullOrWhiteSpace(directory)) throw new ArgumentException();
+
+            using (var db = new DbProvider(this.Setting.StoragePath))
+            {
+                db.BeginTransaction();
+                this.CurrentStamp.SaveAsLocal(db, directory);
                 db.Commit();
             }
         }

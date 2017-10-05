@@ -22,6 +22,19 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
+    <i:Interaction.Triggers>
+        <!-- 保存完了ダイアログ -->
+        <prism:InteractionRequestTrigger SourceObject="{Binding SaveLocalCompletedRequest, Mode=OneWay}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowStyle>
+                    <Style TargetType="{x:Type Window}">
+                        <Setter Property="ResizeMode" Value="NoResize" />
+                        <Setter Property="SizeToContent" Value="WidthAndHeight" />
+                    </Style>
+                </prism:PopupWindowAction.WindowStyle>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+    </i:Interaction.Triggers>
     <DockPanel>
         <!--
         <Menu IsMainMenu="True" DockPanel.Dock="Top">
@@ -115,7 +128,6 @@
                                     </ctrl:DraggableItemsControl.ItemsPanel>
                                 </ctrl:DraggableItemsControl>
                             </Canvas>
-                            
                         </Canvas>
                     </ScrollViewer>
                 </md:Card>
@@ -179,7 +191,7 @@
                     <Button Canvas.Bottom="-15" Canvas.Right="25" Style="{StaticResource MaterialDesignFloatingActionButton}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
-                                <local:DirectorySelectAction CompleteCommand="{Binding OpenImageFileCommand, Mode=OneWay}" />
+                                <local:DirectorySelectAction CompleteCommand="{Binding SaveLocalCommand, Mode=OneWay}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <md:PackIcon Kind="Upload" Width="32" Height="32" />

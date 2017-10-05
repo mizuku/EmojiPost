@@ -54,6 +54,11 @@ namespace EmojiPost.ViewModels
         public InteractionRequest<CropNotification> CropRequest { get; } = new InteractionRequest<CropNotification>();
 
         /// <summary>
+        /// ローカル保存完了リクエスト を取得します。
+        /// </summary>
+        public InteractionRequest<INotification> SaveLocalCompletedRequest { get; } = new InteractionRequest<INotification>();
+
+        /// <summary>
         /// 編集元画像ファイルを開くコマンド を取得します。
         /// </summary>
         public ReactiveCommand<string> OpenImageFileCommand { get; }
@@ -67,6 +72,11 @@ namespace EmojiPost.ViewModels
         /// 画像くり抜きコマンド
         /// </summary>
         public ReactiveCommand CropCommand { get; private set; }
+
+        /// <summary>
+        /// ローカルファイル保存コマンド を取得します。
+        /// </summary>
+        public ReactiveCommand<string> SaveLocalCommand { get; private set; }
 
         #endregion
 
@@ -135,9 +145,11 @@ namespace EmojiPost.ViewModels
                     .ToReactiveCommand();
                 this.SaveStampCommand.Subscribe(() => this.SaveStamp());
 
+                // 保存するために必要な条件となるプロパティの監視
                 var p0 = model.ObserveProperty(m => m.ImageSourceBitmap);
                 var p1 = model.ObserveProperty(m => m.StampName);
                 var p2 = model.ObserveProperty(m => m.PixelOfFragments);
+
                 this.CropCommand = p0.CombineLatest(p1, p2,
                     (pp0, pp1, pp2) => null != pp0 && !string.IsNullOrWhiteSpace(pp1) && 0 < pp2)
                     .ToReactiveCommand();
@@ -146,6 +158,15 @@ namespace EmojiPost.ViewModels
                     this.CropRequest.Raise(
                         new CropNotification(this.CurrentStamp.Value.ClipRect),
                         n => this.Editor.DevideImage(n.ClipImage));
+                });
+
+                this.SaveLocalCommand = p0.CombineLatest(p1, p2,
+                    (pp0, pp1, pp2) => null != pp0 && !string.IsNullOrWhiteSpace(pp1) && 0 < pp2)
+                    .ToReactiveCommand<string>();
+                this.SaveLocalCommand.Subscribe(s =>
+                {
+                    this.Editor.SaveAsLocal(s);
+                    this.SaveLocalCompletedRequest.Raise(new Notification { Title = "完了通知", Content = "できたヨ！" });
                 });
                 #endregion
             }
