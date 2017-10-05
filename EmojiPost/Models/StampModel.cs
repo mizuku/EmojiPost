@@ -26,11 +26,6 @@ namespace EmojiPost.Models
         /// </summary>
         private StampEntity entity;
 
-        /// <summary>
-        /// スタンプの断片 のエンティティモデルのリスト
-        /// </summary>
-        private List<FragmentEntity> fragments;
-
         #endregion
 
         #region Properties
@@ -231,6 +226,11 @@ namespace EmojiPost.Models
         /// </summary>
         public IStampService StampService { get; set; }
 
+        /// <summary>
+        /// スタンプ断片サービス を取得または設定します。
+        /// </summary>
+        public IFragmentService FragmentService { get; set; }
+
         #endregion
 
         #region Methods
@@ -270,12 +270,21 @@ namespace EmojiPost.Models
         /// ストレージへこのスタンプの情報を保存します。
         /// </summary>
         /// <param name="db">データベースプロバイダー</param>
-        public void SaveStamp(DbProvider db)
+        public void SaveStamp(DbProvider db, EditState editState = EditState.Saved)
         {
-            // TODO Fragments
+            // スタンプ断片はDelete>Insert
+            this.FragmentService.DeleteByStampId(db, this.entity.StampId);
+            var fragments = this.Fragments;
+            if (null != fragments && fragments.Any())
+            {
+                foreach (var f in fragments)
+                {
+                    f.SaveFragment(db);
+                }
+            }
 
             // 更新
-            this.EditState = this.EditState | EditState.Saved;
+            this.EditState = editState;
             this.entity = this.ToEntities();
             this.entity.DateOfUpdate = DateTime.Now.ToString();
             this.StampService.Update(db, this.entity);
@@ -292,8 +301,9 @@ namespace EmojiPost.Models
         /// <summary>
         /// 画像を分割し、スタンプ断片情報を作成します。
         /// </summary>
+        /// <param name="db">データベースプロバイダー</param>
         /// <param name="clipImage">分割する画像</param>
-        public void DivideToFragments(BitmapSource clipImage)
+        public void DivideToFragments(DbProvider db, BitmapSource clipImage)
         {
             if (null == clipImage || string.IsNullOrWhiteSpace(this.StampName) || this.PixelOfFragments <= 0)
                 throw new ArgumentException("必要なスタンプ情報が未設定です。");
@@ -302,6 +312,10 @@ namespace EmojiPost.Models
             var cx = (int)Math.Floor(this.ClipRectWidth / px);
             var cy = (int)Math.Floor(this.ClipRectHeight / px);
 
+            // スタンプ断片IDを取得
+            int nextFragmentId = this.FragmentService.NextFragmentId(db);
+
+            // 分割した画像はFragmentModelとして保持
             var fragments = new List<FragmentModel>();
             int order = 0;
             for (int y = 0; y < cy; y++)
@@ -309,16 +323,22 @@ namespace EmojiPost.Models
                 for (int x = 0; x < cx; x++)
                 {
                     var fragmentImage = new CroppedBitmap(clipImage, new Int32Rect(x * px, y * px, px, px));
-                    var fragment = new FragmentModel()
-                    {
-                        EmojiName = $"{this.StampName}{y}{x}",
-                        ImageBitmap = fragmentImage,
-                        OrderOfFragments = order++,
-                    };
-                    fragments.Add(fragment);
+                    var f = ContainerProvider.Resolve<FragmentModel>();
+                    f.FragmentId = nextFragmentId++;
+                    f.StampId = this.entity.StampId;
+                    f.EmojiName = $"{this.StampName}{y}{x}";
+                    f.ImageBitmap = fragmentImage;
+                    f.OrderOfFragments = order++;
+                    f.StampSize = this.ClipRect.Size;
+                    f.PixelOfFragments = this.PixelOfFragments;
+
+                    fragments.Add(f);
                 }
             }
             this.Fragments = new ObservableCollection<FragmentModel>(fragments);
+
+            // 分割直後の状態でDBに書き込んでしまう
+            this.SaveStamp(db, EditState.Editing);
         }
 
         /// <summary>
@@ -410,19 +430,21 @@ namespace EmojiPost.Models
         /// <param name="db">データベースプロバイダー</param>
         private void InitializeEntities(DbProvider db)
         {
-            var e = new StampEntity();
-            e.StampId = this.StampService.NextStampId(db);
-            // TODO
-            e.WorkspaceId = 1;
-            e.StampName = this.StampName;
-            e.StampLocalName = this.StampLocalName;
-            e.CanvasWidth = this.CanvasWidth;
-            e.CanvasHeight = this.CanvasHeight;
-            e.PixelOfFragments = this.PixelOfFragments;
-            e.SourceRect = this.SourceRect.ToString();
-            e.ClipRect = this.ClipRect.ToString();
-            e.DateOfCreate = DateTime.Now.ToString();
-            e.DateOfUpdate = DateTime.Now.ToString();
+            var e = new StampEntity
+            {
+                StampId = this.StampService.NextStampId(db),
+                // TODO
+                WorkspaceId = 1,
+                StampName = this.StampName,
+                StampLocalName = this.StampLocalName,
+                CanvasWidth = this.CanvasWidth,
+                CanvasHeight = this.CanvasHeight,
+                PixelOfFragments = this.PixelOfFragments,
+                SourceRect = this.SourceRect.ToString(),
+                ClipRect = this.ClipRect.ToString(),
+                DateOfCreate = DateTime.Now.ToString(),
+                DateOfUpdate = DateTime.Now.ToString()
+            };
 
             this.entity = e;
         }
@@ -482,10 +504,12 @@ namespace EmojiPost.Models
         /// このクラスのインスタンスを生成する、コンストラクタです。
         /// </summary>
         /// <param name="stampService">スタンプサービス</param>
-        public StampModel(IStampService stampService)
+        /// <param name="fragmentService">スタンプ断片サービス</param>
+        public StampModel(IStampService stampService, IFragmentService fragmentService)
             : base()
         {
             this.StampService = stampService;
+            this.FragmentService = fragmentService;
 
             this._stampName = null;
             this._stampLocalName = null;

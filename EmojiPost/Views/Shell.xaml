@@ -9,7 +9,7 @@
         prism:ViewModelLocator.AutoWireViewModel="True"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
-        Title="{StaticResource ApplicationTitle}" Height="640" Width="640"
+        Title="{StaticResource ApplicationTitle}" Height="720" Width="720"
         TextElement.Foreground="{StaticResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
