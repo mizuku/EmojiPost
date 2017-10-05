@@ -209,6 +209,11 @@
                 </md:Card>
                 <Canvas Grid.Row="0">
                     <Button Canvas.Bottom="-15" Canvas.Right="25" Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <local:DirectorySelectAction CompleteCommand="{Binding OpenImageFileCommand, Mode=OneWay}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                         <md:PackIcon Kind="Upload" Width="32" Height="32" />
                     </Button>
                 </Canvas>

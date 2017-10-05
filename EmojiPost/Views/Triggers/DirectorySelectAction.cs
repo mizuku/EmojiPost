@@ -2,20 +2,20 @@
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interactivity;
-using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace EmojiPost.Views
 {
     /// <summary>
-    /// ファイル選択トリガーアクション
+    /// ディレクトリ選択トリガーアクション
     /// </summary>
-    public class OpenFileSelectAction : TriggerAction<UIElement>
+    public class DirectorySelectAction : TriggerAction<UIElement>
     {
 
         #region DependencyPropertieds
 
         /// <summary>
-        /// ファイル選択完了コマンド を取得または設定します。
+        /// ディレクトリ選択完了コマンド を取得または設定します。
         /// </summary>
         public ICommand CompleteCommand 
         {
@@ -25,23 +25,24 @@ namespace EmojiPost.Views
 
         // Using a DependencyProperty as the backing store for CompleteCommand.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CompleteCommandProperty =
-            DependencyProperty.Register("CompleteCommand", typeof(ICommand), typeof(OpenFileSelectAction), new FrameworkPropertyMetadata(
+            DependencyProperty.Register("CompleteCommand", typeof(ICommand), typeof(DirectorySelectAction), new FrameworkPropertyMetadata(
                 null, FrameworkPropertyMetadataOptions.SubPropertiesDoNotAffectRender, (oo, ee) => { }, null, false, UpdateSourceTrigger.PropertyChanged));
 
         #endregion
 
         protected override void Invoke(object parameter)
         {
-            var dialog = new OpenFileDialog()
+            // WPF標準のファイルダイアログにはフォルダー選択モードが無いので WindowsAPICodePackを使う
+            var dialog = new CommonOpenFileDialog()
             {
-                CheckFileExists = true,
-                CheckPathExists = true,
-                DereferenceLinks = true,
-                //InitialDirectory = "",
-                Title = "スタンプ画像を選択",
-                ValidateNames = true,
+                EnsurePathExists = true,
+                EnsureValidNames = true,
+                Multiselect = false,
+                IsFolderPicker = true,
+                //DefaultDirectory = "",
+                Title = "保存フォルダーを選択",
             };
-            if (dialog.ShowDialog() ?? false)
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 var command = this.CompleteCommand;
                 if (null != command && command.CanExecute(dialog.FileName))
