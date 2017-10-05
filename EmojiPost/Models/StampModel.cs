@@ -12,6 +12,7 @@ using AyaStyle.DataServices.Entities;
 using AyaStyle.Enums;
 using AyaStyle.DataServices.Clients;
 using AyaStyle.DataServices.Services;
+using System.Text;
 
 namespace AyaStyle.Models
 {
@@ -198,7 +199,13 @@ namespace AyaStyle.Models
         public ObservableCollection<FragmentModel> Fragments
         {
             get => this._fragments;
-            set => SetProperty(ref this._fragments, value);
+            set
+            {
+                if (SetProperty(ref this._fragments, value))
+                {
+                    RaisePropertyChanged(nameof(StampString));
+                }
+            }
         }
 
         /// <summary>
@@ -216,6 +223,32 @@ namespace AyaStyle.Models
         {
             get => new Rect(this.ClipRectLeft, this.ClipRectTop, this.ClipRectWidth, this.ClipRectHeight);
         }
+
+        /// <summary>
+        /// このスタンプを書き込むための文字列 を取得します。
+        /// </summary>
+        public string StampString
+        {
+            get
+            {
+                if (null == this.Fragments || false == this.Fragments.Any()) return string.Empty;
+
+                StringBuilder builder = new StringBuilder();
+                foreach (var f in this.Fragments)
+                {
+                    if (f.FragmentAddressX == 0 && f.FragmentAddressY != 0)
+                    {
+                        builder.Append('\n');
+                    }
+                    builder
+                        .Append(':')
+                        .Append(f.EmojiName)
+                        .Append(':');
+                }
+                return builder.ToString();
+            }
+        }
+        
 
         #endregion
 

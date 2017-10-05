@@ -199,7 +199,12 @@
                 </Canvas>
                 <!-- DEBUG -->
                 <Grid Grid.Row="1" DataContext="{Binding CurrentStamp.Value, Mode=OneWay}">
-                    <ListBox ItemsSource="{Binding Fragments, Mode=OneWay}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <ListBox Grid.Row="0"
+                             ItemsSource="{Binding Fragments, Mode=OneWay}">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <Canvas />
@@ -208,8 +213,8 @@
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}">
                                 <Setter Property="OverridesDefaultStyle" Value="True" />
-                                <Setter Property="Canvas.Left" Value="{Binding PositionX}" />
-                                <Setter Property="Canvas.Top" Value="{Binding PositionY}" />
+                                <Setter Property="Canvas.Left" Value="{Binding PositionX, Mode=OneWay}" />
+                                <Setter Property="Canvas.Top" Value="{Binding PositionY, Mode=OneWay}" />
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -229,6 +234,9 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+                    <TextBox Grid.Row="1"
+                             IsReadOnly="True"
+                             Text="{Binding StampString, Mode=OneWay}" />
                 </Grid>
             </Grid>
         </Grid>

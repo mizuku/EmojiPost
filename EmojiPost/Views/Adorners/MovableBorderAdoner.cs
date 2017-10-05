@@ -19,7 +19,7 @@ namespace AyaStyle.Views.Adorners
 
         private bool isDrag;
         private Point dragOffset;
-        private double magnify;
+        private IInputElement adornedElementParent;
 
         #endregion
 
@@ -33,7 +33,6 @@ namespace AyaStyle.Views.Adorners
             if (this.isDrag)
             {
                 this.dragOffset = new Point(0.0d, 0.0d);
-                this.magnify = 1.0d;
                 this.isDrag = false;
             }
             this.ReleaseMouseCapture();
@@ -42,6 +41,25 @@ namespace AyaStyle.Views.Adorners
         #endregion
 
         #region Override Adorner
+
+        /// <summary>
+        /// アドナーを初期化します。
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+
+            var parent = VisualTreeHelper.GetParent(this.AdornedElement) as IInputElement;
+            if (null != parent)
+            {
+                this.adornedElementParent = parent;
+            }
+            else
+            {
+                throw new ApplicationException("このアドナーを装飾することのできないオブジェクトです。");
+            }
+        }
 
         /// <summary>
         /// アドナーを描画します。
@@ -66,8 +84,6 @@ namespace AyaStyle.Views.Adorners
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             this.isDrag = true;
-            var refer = ContainerProvider.Resolve<EditorSettingReferenceModel>();
-            this.magnify = refer.Magnify;
             this.dragOffset = e.GetPosition(this.AdornedElement);
             this.CaptureMouse();
             Mouse.OverrideCursor = Cursors.ScrollAll;
@@ -104,11 +120,10 @@ namespace AyaStyle.Views.Adorners
         {
             if (this.isDrag)
             {
-                var parent = this.Parent as AdornerLayer;
-                var pos = Mouse.GetPosition(parent);
+                var pos = Mouse.GetPosition(this.adornedElementParent);
 
-                Canvas.SetLeft(this.AdornedElement, (pos.X - dragOffset.X * this.magnify) / this.magnify);
-                Canvas.SetTop(this.AdornedElement, (pos.Y - dragOffset.Y * this.magnify) / this.magnify);
+                Canvas.SetLeft(this.AdornedElement, pos.X - dragOffset.X);
+                Canvas.SetTop(this.AdornedElement, pos.Y - dragOffset.Y);
             }
 
             base.OnPreviewMouseMove(e);

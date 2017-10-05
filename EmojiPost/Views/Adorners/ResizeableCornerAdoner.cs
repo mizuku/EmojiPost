@@ -21,7 +21,7 @@ namespace AyaStyle.Views.Adorners
         private Point dragStart;
         private double dragStartWidth;
         private double dragStartHeight;
-        private double magnify;
+        private IInputElement adornedElementParent;
 
         #endregion
 
@@ -68,7 +68,6 @@ namespace AyaStyle.Views.Adorners
                 this.dragStart = new Point(0.0d, 0.0d);
                 this.dragStartWidth = 0.0d;
                 this.dragStartHeight = 0.0d;
-                this.magnify = 1.0d;
                 this.isDrag = false;
             }
             this.ReleaseMouseCapture();
@@ -77,6 +76,25 @@ namespace AyaStyle.Views.Adorners
         #endregion
 
         #region Override Adorner
+
+        /// <summary>
+        /// アドナーを初期化します。
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+
+            var parent = VisualTreeHelper.GetParent(this.AdornedElement) as IInputElement;
+            if (null != parent)
+            {
+                this.adornedElementParent = parent;
+            }
+            else
+            {
+                throw new ApplicationException("このアドナーを装飾することのできないオブジェクトです。");
+            }
+        }
 
         /// <summary>
         /// アドナーを描画します。
@@ -120,9 +138,7 @@ namespace AyaStyle.Views.Adorners
         {
             // ドラッグ開始時
             this.isDrag = true;
-            this.magnify = ContainerProvider.Resolve<EditorSettingReferenceModel>().Magnify;
-            var parent = this.Parent as AdornerLayer;
-            this.dragStart = Mouse.GetPosition(parent);
+            this.dragStart = Mouse.GetPosition(this.adornedElementParent);
             var el = this.AdornedElement as FrameworkElement;
             if (null != el)
             {
@@ -165,14 +181,13 @@ namespace AyaStyle.Views.Adorners
         {
             if (this.isDrag)
             {
-                var parent = this.Parent as AdornerLayer;
-                var dragEnd = Mouse.GetPosition(parent);
+                var dragEnd = Mouse.GetPosition(this.adornedElementParent);
 
                 var el = this.AdornedElement as FrameworkElement;
                 if (null != el)
                 {
-                    var moveX = (dragEnd.X - dragStart.X) / this.magnify;
-                    var moveY = (dragEnd.Y - dragStart.Y) / this.magnify;
+                    var moveX = (dragEnd.X - dragStart.X);
+                    var moveY = (dragEnd.Y - dragStart.Y);
                     switch (this.Corner)
                     {
                         case Corners.TopLeft:
@@ -184,8 +199,8 @@ namespace AyaStyle.Views.Adorners
                                 el.Width = s.Width;
                                 el.Height = s.Height;
                                 // 最小サイズを下回るときに場所だけ変わらないように差分で移動
-                                Canvas.SetLeft(el, dragStartWidth + (this.dragStart.X / this.magnify) - s.Width);
-                                Canvas.SetTop(el, dragStartHeight + (this.dragStart.Y / this.magnify) - s.Height);
+                                Canvas.SetLeft(el, dragStartWidth + this.dragStart.X - s.Width);
+                                Canvas.SetTop(el, dragStartHeight + this.dragStart.Y - s.Height);
                             }
                             break;
                         case Corners.TopRight:
@@ -197,7 +212,7 @@ namespace AyaStyle.Views.Adorners
                                 el.Width = s.Width;
                                 el.Height = s.Height;
                                 // 最小サイズを下回るときに場所だけ変わらないように差分で移動
-                                Canvas.SetTop(el, dragStartHeight + (this.dragStart.Y / this.magnify) - s.Height);
+                                Canvas.SetTop(el, dragStartHeight + this.dragStart.Y - s.Height);
                             }
                             break;
                         case Corners.BottomLeft:
@@ -209,7 +224,7 @@ namespace AyaStyle.Views.Adorners
                                 el.Width = s.Width;
                                 el.Height = s.Height;
                                 // 最小サイズを下回るときに場所だけ変わらないように差分で移動
-                                Canvas.SetLeft(el, dragStartWidth + (this.dragStart.X / this.magnify) - s.Width);
+                                Canvas.SetLeft(el, dragStartWidth + this.dragStart.X - s.Width);
                             }
                             break;
                         case Corners.BottomRight:
