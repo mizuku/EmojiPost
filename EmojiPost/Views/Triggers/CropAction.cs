@@ -6,9 +6,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Prism.Interactivity.InteractionRequest;
 
-using EmojiPost.ViewModels.Notifications;
+using AyaStyle.ViewModels.Notifications;
 
-namespace EmojiPost.Views
+namespace AyaStyle.Views
 {
     /// <summary>
     /// 画像くり抜きトリガーアクション

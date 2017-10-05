@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-using EmojiPost.DataServices.Clients;
+using AyaStyle.DataServices.Clients;
 
-namespace EmojiPost.DataServices.Services
+namespace AyaStyle.DataServices.Services
 {
 
     /// <summary>

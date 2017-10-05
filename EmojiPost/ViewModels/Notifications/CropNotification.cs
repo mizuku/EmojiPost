@@ -3,7 +3,7 @@ using System.Windows.Media.Imaging;
 
 using Prism.Interactivity.InteractionRequest;
 
-namespace EmojiPost.ViewModels.Notifications
+namespace AyaStyle.ViewModels.Notifications
 {
     /// <summary>
     /// 画像くり抜きの通知オブジェクト

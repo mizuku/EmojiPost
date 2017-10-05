@@ -4,10 +4,10 @@ using System.Windows;
 using Prism.Autofac;
 using Autofac;
 
-using EmojiPost.Views;
-using EmojiPost.Models;
+using AyaStyle.Views;
+using AyaStyle.Models;
 
-namespace EmojiPost
+namespace AyaStyle
 {
     /// <summary>
     /// アプリケーションのブートストラッパー
@@ -31,24 +31,24 @@ namespace EmojiPost
 
             // Serviceの登録
             builder
-                .RegisterAssemblyTypes(typeof(EmojiPost.App).Assembly)
-                .Where(x => x.IsInNamespace("EmojiPost.DataServices.Services.Implementations"))
+                .RegisterAssemblyTypes(typeof(AyaStyle.App).Assembly)
+                .Where(x => x.IsInNamespace("AyaStyle.DataServices.Services.Implementations"))
                 .Where(x => x.Name.EndsWith("Service"))
                 .AsImplementedInterfaces()
                 .SingleInstance();
 
             // 非Singleton Modelの登録
             builder
-                .RegisterAssemblyTypes(typeof(EmojiPost.App).Assembly)
-                .Where(x => x.IsInNamespace("EmojiPost.Models"))
+                .RegisterAssemblyTypes(typeof(AyaStyle.App).Assembly)
+                .Where(x => x.IsInNamespace("AyaStyle.Models"))
                 .Where(x => x.Name.EndsWith("Model"))
                 .Where(x => !typeof(ISingletonModel).IsAssignableFrom(x))
                 .AsSelf();
 
             // Singleton Modelの登録
             builder
-                .RegisterAssemblyTypes(typeof(EmojiPost.App).Assembly)
-                .Where(x => x.IsInNamespace("EmojiPost.Models"))
+                .RegisterAssemblyTypes(typeof(AyaStyle.App).Assembly)
+                .Where(x => x.IsInNamespace("AyaStyle.Models"))
                 .Where(x => x.Name.EndsWith("Model"))
                 .Where(x => typeof(ISingletonModel).IsAssignableFrom(x))
                 .AsSelf()
@@ -58,8 +58,8 @@ namespace EmojiPost
             // ViewModelの登録
             // Property Injection で Autowiring しないなら何も書かなくても勝手に登録してくれる (6.3以降？)
             builder
-                .RegisterAssemblyTypes(typeof(EmojiPost.App).Assembly)
-                .Where(x => x.IsInNamespace("EmojiPost.ViewModels"))
+                .RegisterAssemblyTypes(typeof(AyaStyle.App).Assembly)
+                .Where(x => x.IsInNamespace("AyaStyle.ViewModels"))
                 .Where(x => x.Name.EndsWith("ViewModel"))
                 .AsSelf()
                 // PropertiesAutowired()が肝らしい
@@ -72,7 +72,7 @@ namespace EmojiPost
         }
 
         /// <summary>
-        /// 既定のウインドウ <see cref="EmojiPost.Views.Shell"/> を作成します。
+        /// 既定のウインドウ <see cref="AyaStyle.Views.Shell"/> を作成します。
         /// </summary>
         /// <returns>Shellの実体</returns>
         protected override DependencyObject CreateShell()
@@ -81,7 +81,7 @@ namespace EmojiPost
         }
 
         /// <summary>
-        /// 既定のウインドウ <see cref="EmojiPost.Views.Shell"/> を初期化します。
+        /// 既定のウインドウ <see cref="AyaStyle.Views.Shell"/> を初期化します。
         /// </summary>
         protected override void InitializeShell()
         {

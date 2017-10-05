@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EmojiPost.DataServices.Clients
+namespace AyaStyle.DataServices.Clients
 {
 
     /// <summary>

@@ -1,8 +1,8 @@
 ﻿
 using Prism.Mvvm;
-using EmojiPost.Models;
+using AyaStyle.Models;
 
-namespace EmojiPost.ViewModels
+namespace AyaStyle.ViewModels
 {
     /// <summary>
     /// アプリケーションのメインビューモデル

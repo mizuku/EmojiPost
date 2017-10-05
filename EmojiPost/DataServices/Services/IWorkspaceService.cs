@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using EmojiPost.DataServices.Entities;
-using EmojiPost.DataServices.Clients;
+using AyaStyle.DataServices.Entities;
+using AyaStyle.DataServices.Clients;
 
-namespace EmojiPost.DataServices.Services
+namespace AyaStyle.DataServices.Services
 {
     /// <summary>
     /// ワークスペースサービスのインタフェース

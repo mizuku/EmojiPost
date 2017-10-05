@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EmojiPost.Enums
+namespace AyaStyle.Enums
 {
     /// <summary>
     /// 編集状態の列挙型

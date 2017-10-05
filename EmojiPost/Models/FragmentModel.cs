@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using Prism.Mvvm;
-using EmojiPost.DataServices.Entities;
-using EmojiPost.DataServices.Clients;
-using EmojiPost.DataServices.Services;
+using AyaStyle.DataServices.Entities;
+using AyaStyle.DataServices.Clients;
+using AyaStyle.DataServices.Services;
 using System.IO;
 using System.Windows;
 
-namespace EmojiPost.Models
+namespace AyaStyle.Models
 {
     /// <summary>
     /// スタンプ断片モデル

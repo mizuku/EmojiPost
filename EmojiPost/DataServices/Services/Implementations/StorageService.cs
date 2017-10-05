@@ -2,11 +2,11 @@
 using System.IO;
 using System.Linq;
 
-using EmojiPost.DataServices.Clients;
-using EmojiPost.DataServices.Utils;
-using EmojiPost.DataServices.Entities;
+using AyaStyle.DataServices.Clients;
+using AyaStyle.DataServices.Utils;
+using AyaStyle.DataServices.Entities;
 
-namespace EmojiPost.DataServices.Services.Implementations
+namespace AyaStyle.DataServices.Services.Implementations
 {
 
     /// <summary>

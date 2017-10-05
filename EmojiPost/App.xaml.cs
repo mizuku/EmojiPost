@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using Autofac;
 
-using EmojiPost.Models;
+using AyaStyle.Models;
 
-namespace EmojiPost
+namespace AyaStyle
 {
     /// <summary>
     /// App.xaml の相互作用ロジック

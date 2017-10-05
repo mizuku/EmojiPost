@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmojiPost.DataServices.Utils
+namespace AyaStyle.DataServices.Utils
 {
     /// <summary>
     /// SQL作成ヘルパー

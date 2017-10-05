@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace EmojiPost.Models
+namespace AyaStyle.Models
 {
     /// <summary>
     /// ドラッグ操作の可能なアイテムであることを表すインタフェース

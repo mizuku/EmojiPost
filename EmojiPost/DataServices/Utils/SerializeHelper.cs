@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 
-namespace EmojiPost.DataServices.Utils
+namespace AyaStyle.DataServices.Utils
 {
     /// <summary>
     /// シリアライズヘルパー

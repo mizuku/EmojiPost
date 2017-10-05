@@ -1,4 +1,4 @@
-﻿namespace EmojiPost.Views.Adorners
+﻿namespace AyaStyle.Views.Adorners
 {
     /// <summary>
     /// CornerAdorner の装飾位置の列挙

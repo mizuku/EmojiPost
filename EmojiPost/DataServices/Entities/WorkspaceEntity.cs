@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace EmojiPost.DataServices.Entities
+namespace AyaStyle.DataServices.Entities
 {
     /// <summary>
     /// ワークスペースのエンティティモデル

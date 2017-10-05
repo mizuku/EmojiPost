@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmojiPost.Models
+namespace AyaStyle.Models
 {
     /// <summary>
     /// 編集画面の設定値参照モデル

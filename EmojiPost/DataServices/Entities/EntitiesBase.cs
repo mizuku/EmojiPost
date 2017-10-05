@@ -1,4 +1,4 @@
-﻿using EmojiPost.DataServices.Utils;
+﻿using AyaStyle.DataServices.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmojiPost.DataServices.Entities
+namespace AyaStyle.DataServices.Entities
 {
     /// <summary>
     /// エンティティモデルの抽象クラス

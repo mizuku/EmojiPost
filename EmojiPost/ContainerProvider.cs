@@ -1,7 +1,7 @@
 ﻿using System;
 using Autofac;
 
-namespace EmojiPost
+namespace AyaStyle
 {
     /// <summary>
     /// アプリケーションのDIコンテナプロバイダー

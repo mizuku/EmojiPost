@@ -4,10 +4,10 @@ using System.Linq;
 using System.Reflection;
 
 using Prism.Mvvm;
-using EmojiPost.DataServices.Services;
-using EmojiPost.DataServices.Clients;
+using AyaStyle.DataServices.Services;
+using AyaStyle.DataServices.Clients;
 
-namespace EmojiPost.Models
+namespace AyaStyle.Models
 {
     /// <summary>
     /// アプリケーションのルートモデル

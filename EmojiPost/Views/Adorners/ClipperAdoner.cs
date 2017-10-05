@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace EmojiPost.Views.Adorners
+namespace AyaStyle.Views.Adorners
 {
     /// <summary>
     /// くり抜き領域を装飾するアドナー

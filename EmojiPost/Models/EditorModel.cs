@@ -5,11 +5,11 @@ using System.Linq;
 using System.IO;
 using System.Windows.Media.Imaging;
 using Prism.Mvvm;
-using EmojiPost.Enums;
-using EmojiPost.DataServices.Clients;
-using EmojiPost.DataServices.Entities;
+using AyaStyle.Enums;
+using AyaStyle.DataServices.Clients;
+using AyaStyle.DataServices.Entities;
 
-namespace EmojiPost.Models
+namespace AyaStyle.Models
 {
     /// <summary>
     /// スタンプ編集モデル

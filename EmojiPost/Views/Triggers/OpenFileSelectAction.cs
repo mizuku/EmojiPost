@@ -4,7 +4,7 @@ using System.Windows.Input;
 using System.Windows.Interactivity;
 using Microsoft.Win32;
 
-namespace EmojiPost.Views
+namespace AyaStyle.Views
 {
     /// <summary>
     /// ファイル選択トリガーアクション

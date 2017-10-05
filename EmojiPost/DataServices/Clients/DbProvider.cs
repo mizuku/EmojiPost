@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmojiPost.DataServices.Clients
+namespace AyaStyle.DataServices.Clients
 {
     /// <summary>
     /// SQLite データベースアクセスのプロバイダー

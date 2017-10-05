@@ -1,4 +1,4 @@
-﻿namespace EmojiPost.Models
+﻿namespace AyaStyle.Models
 {
     /// <summary>
     /// モデルがシングルトンであることを表すインタフェース

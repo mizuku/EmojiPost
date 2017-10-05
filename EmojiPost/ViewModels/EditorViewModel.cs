@@ -8,10 +8,10 @@ using Prism.Interactivity.InteractionRequest;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
-using EmojiPost.Models;
-using EmojiPost.ViewModels.Notifications;
+using AyaStyle.Models;
+using AyaStyle.ViewModels.Notifications;
 
-namespace EmojiPost.ViewModels
+namespace AyaStyle.ViewModels
 {
     /// <summary>
     /// スタンプ編集ビューモデル

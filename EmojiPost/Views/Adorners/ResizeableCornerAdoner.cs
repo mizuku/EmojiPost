@@ -5,9 +5,9 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 
-using EmojiPost.Models;
+using AyaStyle.Models;
 
-namespace EmojiPost.Views.Adorners
+namespace AyaStyle.Views.Adorners
 {
     /// <summary>
     /// 要素のリサイズを可能とするアドナー

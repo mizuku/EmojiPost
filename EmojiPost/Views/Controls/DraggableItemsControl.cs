@@ -6,9 +6,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
-using EmojiPost.Views.Adorners;
+using AyaStyle.Views.Adorners;
 
-namespace EmojiPost.Views.Controls
+namespace AyaStyle.Views.Controls
 {
     /// <summary>
     /// ドラッグ可能なコントロールのコンテナー

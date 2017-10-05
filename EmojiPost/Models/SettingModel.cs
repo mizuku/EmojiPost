@@ -1,4 +1,4 @@
-﻿using EmojiPost.DataServices.Clients;
+﻿using AyaStyle.DataServices.Clients;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmojiPost.Models
+namespace AyaStyle.Models
 {
     /// <summary>
     /// アプリケーションの設定モデル

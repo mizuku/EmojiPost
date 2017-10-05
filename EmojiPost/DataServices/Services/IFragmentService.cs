@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EmojiPost.DataServices.Clients;
-using EmojiPost.DataServices.Entities;
+using AyaStyle.DataServices.Clients;
+using AyaStyle.DataServices.Entities;
 
-namespace EmojiPost.DataServices.Services
+namespace AyaStyle.DataServices.Services
 {
     /// <summary>
     /// スタンプ断片サービスのインタフェース

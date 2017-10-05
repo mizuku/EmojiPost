@@ -8,12 +8,12 @@ using System.IO;
 
 using Prism.Mvvm;
 
-using EmojiPost.DataServices.Entities;
-using EmojiPost.Enums;
-using EmojiPost.DataServices.Clients;
-using EmojiPost.DataServices.Services;
+using AyaStyle.DataServices.Entities;
+using AyaStyle.Enums;
+using AyaStyle.DataServices.Clients;
+using AyaStyle.DataServices.Services;
 
-namespace EmojiPost.Models
+namespace AyaStyle.Models
 {
     /// <summary>
     /// スタンプモデル

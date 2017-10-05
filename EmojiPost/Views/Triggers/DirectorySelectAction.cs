@@ -4,7 +4,7 @@ using System.Windows.Input;
 using System.Windows.Interactivity;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
-namespace EmojiPost.Views
+namespace AyaStyle.Views
 {
     /// <summary>
     /// ディレクトリ選択トリガーアクション

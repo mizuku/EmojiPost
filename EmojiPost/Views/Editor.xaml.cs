@@ -1,4 +1,4 @@
-﻿using EmojiPost.Views.Adorners;
+﻿using AyaStyle.Views.Adorners;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EmojiPost.Views
+namespace AyaStyle.Views
 {
     /// <summary>
     /// Editor.xaml の相互作用ロジック

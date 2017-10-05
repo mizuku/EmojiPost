@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using EmojiPost.DataServices.Clients;
-using EmojiPost.DataServices.Entities;
-using EmojiPost.DataServices.Utils;
+using AyaStyle.DataServices.Clients;
+using AyaStyle.DataServices.Entities;
+using AyaStyle.DataServices.Utils;
 
-namespace EmojiPost.DataServices.Services.Implementations
+namespace AyaStyle.DataServices.Services.Implementations
 {
     /// <summary>
     /// スタンプサービス の実装
