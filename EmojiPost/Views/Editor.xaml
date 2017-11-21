@@ -98,7 +98,8 @@
                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ClipToBounds="false" SnapsToDevicePixels="True">
                     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" CanContentScroll="True">
                         <Canvas x:Name="EditCanvas" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White"
-                                Width="{Binding CurrentStamp.Value.CanvasWidth, Mode=OneWay}" Height="{Binding CurrentStamp.Value.CanvasHeight}">
+                                Width="{Binding CurrentStamp.Value.CanvasWidth, Mode=OneWay}" Height="{Binding CurrentStamp.Value.CanvasHeight}"
+                                ClipToBounds="True">
                             <Canvas.LayoutTransform>
                                 <ScaleTransform ScaleX="{Binding Magnify.Value, Mode=OneWay}" ScaleY="{Binding Magnify.Value, Mode=OneWay}" />
                             </Canvas.LayoutTransform>
